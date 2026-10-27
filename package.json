@@ -1,0 +1,58 @@
+{
+  "name": "@quokkaquery/elo",
+  "version": "0.1.0",
+  "description": "Reusable ELO rating system — core math, K-factor strategies, rating pools, match history",
+  "keywords": [
+    "elo",
+    "rating",
+    "ranking",
+    "leaderboard",
+    "matchmaking",
+    "chess",
+    "typescript"
+  ],
+  "homepage": "https://quokkaquery.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nodlume/elo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Nodlume/elo/issues"
+  },
+  "author": {
+    "name": "QuokkaQuery",
+    "url": "https://quokkaquery.com"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "API.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
