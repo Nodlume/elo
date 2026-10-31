@@ -1,6 +1,6 @@
 {
   "name": "@quokkaquery/elo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Reusable ELO rating system — core math, K-factor strategies, rating pools, match history",
   "keywords": [
     "elo",
