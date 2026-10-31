@@ -1,3 +1,8 @@
+/**
+ * Stateful Elo bookkeeping on top of the pure functions in core: holds
+ * per-player ratings and win/loss/draw counts in memory, applies the
+ * configured K-factor and rating bounds, and keeps a log of recorded matches.
+ */
 import { expectedScore, newRating } from "./core.js";
 import { constant } from "./k-factors.js";
 import type {
@@ -14,6 +19,10 @@ import type {
 /**
  * A managed rating pool that tracks players, processes matches,
  * and maintains history.
+ *
+ * Unset config fields default to a 1500 starting rating, a constant
+ * K-factor of 32, and no rating bounds. A numeric `kFactor` is wrapped in
+ * `constant()`; a function is called per player before each match.
  */
 export class RatingPool {
   private players = new Map<string, Rating>();
@@ -33,7 +42,10 @@ export class RatingPool {
     this.maxRating = config.maxRating ?? Infinity;
   }
 
-  /** Register a player with an optional starting rating. */
+  /**
+   * Register a player with an optional starting rating. If the id is already
+   * registered, returns the existing record unchanged and ignores `rating`.
+   */
   addPlayer(id: string, rating?: number): Rating {
     if (this.players.has(id)) return this.players.get(id)!;
     const r: Rating = {
@@ -116,6 +128,10 @@ export class RatingPool {
    * Process a free-for-all / multi-player result.
    * Each pair is matched: higher-scored player gets a win, equal scores draw.
    * Returns all pairwise deltas.
+   *
+   * Pairs are recorded one at a time in entry order, so later pairs see
+   * ratings already moved by earlier ones, and each pair adds its own
+   * history entry and gamesPlayed increment.
    */
   recordFreeForAll(entries: FreeForAllEntry[]): UpdateResult[] {
     const results: UpdateResult[] = [];
@@ -143,12 +159,18 @@ export class RatingPool {
     return this.players.has(id);
   }
 
-  /** Remove a player and their history. */
+  /**
+   * Remove a player's rating record; returns false if the id was not
+   * registered. Their past matches stay in the history log.
+   */
   removePlayer(id: string): boolean {
     return this.players.delete(id);
   }
 
-  /** Reset all ratings to initial, clear history. */
+  /**
+   * Remove every player and clear history; config is kept, so players
+   * re-added afterwards start from the configured initial rating.
+   */
   reset(): void {
     this.players.clear();
     this.history = [];

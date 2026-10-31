@@ -1,15 +1,20 @@
+/**
+ * Ready-made K-factor strategies. Each export is a factory returning a
+ * `KFactorFn` that picks K from the player's current `Rating`, so different
+ * players in the same match can receive different K values.
+ */
 import type { KFactorFn, Rating } from "./types.js";
 
-/** Constant K-factor. */
+/** Returns a strategy that ignores the player and always yields `k`. */
 export function constant(k: number): KFactorFn {
   return () => k;
 }
 
 /**
  * FIDE-style K-factor:
- * - K=40 for players with fewer than 30 games
- * - K=20 for players rated 2400+
- * - K=10 for all others
+ * - K=40 for players with fewer than 30 games, regardless of rating
+ * - K=10 for players rated 2400+
+ * - K=20 for all others
  */
 export function fide(): KFactorFn {
   return (player: Rating) => {
@@ -35,7 +40,8 @@ export function uscf(): KFactorFn {
 
 /**
  * Linear decay: K starts at `high` and linearly decreases to `low`
- * over the first `games` matches.
+ * over the first `games` matches, then stays at `low`. Values in between
+ * are fractional, not rounded.
  */
 export function linearDecay(high: number, low: number, games: number): KFactorFn {
   return (player: Rating) => {

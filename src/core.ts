@@ -1,3 +1,8 @@
+/**
+ * Core Elo rating math: the logistic expected score on the standard
+ * 400-point scale, and the K-factor update that moves a rating toward the
+ * observed result. Functions are pure and do no rounding or clamping.
+ */
 import type { Outcome } from "./types.js";
 
 /**

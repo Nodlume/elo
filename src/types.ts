@@ -1,3 +1,9 @@
+/**
+ * Shared data shapes for Elo rating: head-to-head and free-for-all match
+ * inputs, per-player rating state, per-match update results, and pool
+ * configuration including pluggable K-factor strategies.
+ */
+
 /** Outcome from the perspective of player A. */
 export type Outcome = 1 | 0.5 | 0;
 
@@ -25,6 +31,10 @@ export interface UpdateResult {
   playerB: RatingDelta;
 }
 
+/**
+ * One player's side of an {@link UpdateResult}: the rating before and after
+ * the match, plus the signed change between them.
+ */
 export interface RatingDelta {
   id: string;
   oldRating: number;
@@ -47,7 +57,7 @@ export interface PoolConfig {
   maxRating?: number;
 }
 
-/** A multi-player match result. Each entry is [playerId, score]. Higher score = better. */
+/** One player's result in a multi-player match: an `{ id, score }` object. Higher score = better. */
 export interface FreeForAllEntry {
   id: string;
   /** Numeric score or placement. Higher = better. */
